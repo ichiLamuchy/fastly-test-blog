@@ -1,0 +1,144 @@
+========================================
+All the processs should follow 
+read.me file
+
+this is just purposeof note the process
+mac OSX 10.13.2
+========================================
+
+
+
+
+* deployed the web below using fastly-test-blog page
+
+    https://blog-fastly.herokuapp.com
+
+* create new service 
+
+    server address : https://blog-fastly.herokuapp.com
+    domain name:   blog-fastly.herokuapp.com
+
+    (don't add / at the end)
+    (port 80 - non SSL)
+
+* test URL: Testing setup before changing domains
+    After you deploy your service, 
+    but before you change your DNS entries to send your domain to our servers, 
+    you can check to see how your service is pulled through the network.
+
+    * Test case 1 : use Web UI - click configure then 
+        click "Test the domain" to see how your service is being pulled through the network. 
+    
+    * Test case 2: using command line
+    
+        * Determining the IP address of a Fastly POP
+
+            $ dig nonssl.global.fastly.net
+            // as mac doesn't have nslookup 
+                ;; ANSWER SECTION:
+                nonssl.global.fastly.net. 30	IN	A	151.101.60.204
+
+            Compare to the document I have this extra line ++++++++++++++++++++ to do : check
+                ;; OPT PSEUDOSECTION:
+                ; EDNS: version: 0, flags:; udp: 8192
+                ;; QUESTION SECTION:
+                ;nonssl.global.fastly.net.	IN	A
+        
+        * Modifying your host file ++++++++ skipped to do: later
+                run below 
+                    151.101.60.204 blog-fastly.herokuapp.com
+                hosts file is /etc/hosts 
+                then save
+        
+        * Testing your domain ++++++++++++++++skipped
+                    ping blog-fastly.herokuapp.com
+                should display Fastly POP address 151.101.56.204
+                Be sure to remove the host entry from your hosts file 
+                after you make CNAME changes to point your domain to Fastly.
+ 
+ * test cURL
+ 
+        * test case 1: use web interface 
+            click "Configure" then click "Check Cache button"
+            the window pop up do put 
+                https://blog-fastly.herokuapp.com
+                (or anything like https://blog-fastly.herokuapp.com/articles/4)
+                it will show you the cache 
+            
+            If the content hash (Fastly-Debug-Digest) is different across nodes, 
+            that usually indicates that there's a caching problem.
+            ++++++++++++++ todo: ask
+            I guess this is now called "Contect hash" under debug info column 
+                out come was all fine all the same 
+            
+        * test case 2 : use cURL
+        
+            * simple cURL command 
+                curl -svo /dev/null blog-fastly.herokuapp.com
+                it shpould show someting similar to one below but nothing like that was print 
+                    < Age: 142
+                    < X-Served-By: cache-jfk1041-JFK, cache-ord1720-ORD
+                    < X-Cache: HIT, HIT
+                    < X-Cache-Hits: 1, 7
+        
+                instead 
+                    Cache-Control: public, no-cache
+                
+                I presume brcause TTL is set to 0
+                regarding to the web interface 
+                    TTL (M cache-itm18820-ITM - - 0)
+            
+                instead use below as instracted
+                    curl -svo /dev/null blog-fastly.herokuapp.com.global.prod.fastly.net
+                Then it's all fine
+                    < Age: 1765
+                    < Connection: keep-alive
+                    < X-Served-By: cache-lhr6322-LHR
+                    < X-Cache: HIT
+                    < X-Cache-Hits: 1
+                 shielding is enabled on as cache-lhr6322-LHR is shown 
+                 (Shield node === designated pop, HIT on shield datacenter so it was in the cache)
+             
+             * Using a Fastly-Debug header with cURL
+                 
+                 curl -svo /dev/null -H "Fastly-Debug:1" blog-fastly.herokuapp.com.global.prod.fastly.net
+                 
+                    < Surrogate-Control: max-age=86400
+                    < Surrogate-Key: articles articles/1 articles/2 articles/3 articles/4
+                    [...]
+                    < Age: 3051
+                    < Connection: keep-alive
+                    < Fastly-Debug-Path: (D cache-lhr6346-LHR 1518822567) (F cache-lhr6337-LHR 1518819516)
+                    < Fastly-Debug-TTL: (H cache-lhr6346-LHR - - 3051) 
+                    < Fastly-Debug-Digest: a6b29f2d4f5d43a7e0e65ab6f2792549d6b7326b84052b73a5b9b6df4726deac
+                    < X-Served-By: cache-lhr6346-LHR
+                    < X-Cache: HIT
+                    < X-Cache-Hits: 1
+                
+                The Fastly-Debug header provides additional information
+                Because surrogate keys are present, the Fastly-Debug header exposes them ++++++ what is surrogate key?
+
+                * about Fastly-Debug Path header  
+                    D represents which cache by name in the edge or shield ran vcl_deliver ++++ todo: what function are they?
+                    F represents which cache by name in the edge or shield ran vcl_fetch ++++++
+
+
+* Changing the TTL for the Article pages
+        Here you must do extra steps:
+        Click "configure" then click current version such as version1,
+        Menu appears on left side but you cannot write anything unless you clone the current version from Option on right top corner
+        So you can start developing the next version of it. 
+        
+        
+
+
+
+
+
+
+
+
+
+
+                
+            
