@@ -1,8 +1,8 @@
 ========================================
-All the processs should follow 
+All the process should follow 
 read.me file
 
-this is just purposeof note the process
+this is just purpose of note the process
 mac OSX 10.13.2
 ========================================
 
@@ -84,11 +84,11 @@ mac OSX 10.13.2
                 instead 
                     Cache-Control: public, no-cache
                 
-                I presume brcause TTL is set to 0
+                I presume because TTL is set to 0
                 regarding to the web interface 
                     TTL (M cache-itm18820-ITM - - 0)
             
-                instead use below as instracted
+                instead use below as instructed
                     curl -svo /dev/null blog-fastly.herokuapp.com.global.prod.fastly.net
                 Then it's all fine
                     < Age: 1765
@@ -125,10 +125,23 @@ mac OSX 10.13.2
 
 * Changing the TTL for the Article pages
         Here you must do extra steps:
-        Click "configure" then click current version such as version1,
-        Menu appears on left side but you cannot write anything unless you clone the current version from Option on right top corner
-        So you can start developing the next version of it. 
+        Click "configure" then click current version such as version 1,
+        Menu appears on left side but you cannot write anything unless you clone the current version 
+        from "Option" on right top corner
+        This is how you can start developing the next version of it. 
         
+        once you have add what you need to add on 
+        new cache setting, click Attach a condition - 
+        right side of the cache setting article page 2min
+        
+        Click the "Activate" button 
+        
+ * surrogate key ++++++++++++ check
+ 
+ 
+ * purge ++++++++++++ check
+ 
+        happens about 5 sec 
         
 
 
@@ -142,3 +155,5 @@ mac OSX 10.13.2
 
                 
             
+
+
