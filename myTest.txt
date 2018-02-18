@@ -182,16 +182,85 @@ mac OSX 10.13.2
         Authenticating URL purge requests van be done via API to just follow here
         https://docs.fastly.com/guides/purging/authenticating-api-purge-requests
         
+ * 6: Origin Shielding
+ 
+    Clone from "Option"
+    Click the Origins link from left
+    Click name of host, The "Edit this host page" appears
+    Select "London LCY" From the Shielding menu
+    Click "Update"
+    Click "Active"
+
+    Because of shild is set, so now curl to check debugger shows
+    both Shield and edge
+        < X-Served-By: cache-lcy19246-LCY, cache-lhr6330-LHR
+        < X-Cache: MISS, MISS
+        < X-Cache-Hits: 0, 0
+        < X-Timer: S1518995908.290193,VS0,VE37
+
+------------------------------------------------------------------------------------------------
+=========================
+Some more understanding
+=========================
+
+* Hit and Miss
+
+    request for an object using the above cURL command
+    curl -svo /dev/null www.example.com
+    
+    it produces
+    
+        X-Served-By: cache-iad2120-IAD, cache-sjc3120-SJC
+            X-Served-By means shild is turnd on     
+            1st one: serving as the delivering cache node at the shield datacenter (shield node)
+            2nd one: serving as the delivering cache node at the "local" datacenter (edge node)
+
+        X-Cache: MISS, MISS
+            1st refers to shield datacenter
+            2nd refers to "local" datacenter
+            MISS - could note find the object
+        X-Cache-Hits: 0, 0
+            The same as above 0 to MISS 1 to HIT
+
+    We expect to change the out come to this after while             
+        X-Served-By: cache-iad2120-IAD, cache-sjc3122-SJC
+        X-Cache: MISS, HIT
+        X-Cache-Hits: 0, 1   
+    
+    if the closest delivering cache node exists in the shield datacenter
+        X-Served-By: cache-iad2120-IAD
+        X-Cache: HIT
+        X-Cache-Hits: 1
+
+* Healthcheck
+    
+    Go and clone version then "Create Health Check"
+    https://docs.fastly.com/guides/basic-configuration/working-with-health-checks
+
+* Shielding
+    
+    shield pop get cashed contecnts along to POP (A)
+    When request goes through another pop, the contents will be cashed from the shielding
+    It's another node behind POP 
+    ++++++++++++++ I presume cache to POP and shielding are asynchronous request : todo ASK
+        subsequently fetch the resource from your origin
+    Shielding is not taken into account when calculating the global hit ratio
+    
+    * Caveats of shielding
+    https://docs.fastly.com/guides/performance-tuning/shielding#caveats-of-shielding
+
+        if when you change host header (of service B) to a different host name which already exist(service A)
+        Edge server thinks the request is for the actual service (service B) but shield thinks it's for service A.
+        So when you wanna purge object from both purge A & B but it will be confusing
+        +++++++ I presume there might be shield try to serve the one wanted to put get to edge server
+
+
+        Say you want Fastly to cache an object for one hour (3600 seconds) 
+        and then ten seconds on the browser. 
+        use Surrogate-Control and Cache-Control response headers.
+        Surrogate-Control overrides Cache-Control and is stripped after the edge node
+        Changes to beresp and resp will affect edge server with max-age=10
     
 
-
-
-
-
-
-
-
-                
-            
-
-
+    
+    
