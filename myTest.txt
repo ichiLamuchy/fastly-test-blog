@@ -175,8 +175,8 @@ mac OSX 10.13.2
         Purge Key
             using surrogate key to purge multiple indivisual path
         
-        ++++++++++ todo: when soft purge is useful???
-        ++++++++++ todo: if purge url was not existing how do you know???
+        ++++++++++ todo: when soft purge is useful???  emailed
+        ++++++++++ todo: if purge url was not existing how do you know??? emailed
         
      * other mehod:
         Authenticating URL purge requests van be done via API to just follow here
@@ -232,6 +232,36 @@ Some more understanding
         X-Cache: HIT
         X-Cache-Hits: 1
 
+
+* Debug info +++++++++++++++++++++++++++++++++++++++++++++++++ need to check - have asked by e-mail.
+    The Fastly-Debug Path
+            (D cache-fjr7922-FJR 1518996169) (F cache-fjr7922-FJR 1518995041) 
+            (D cache-lcy19237-LCY 1518995040) (F cache-lcy19248-LCY 1518995040)
+    
+        which nodes handled fetching and delivery of an object, 
+        as well as object TTL information (Edge PoP on first, Shield PoP second)
+    
+            D: refers to which node ran vcl_deliver
+            F: refers to which node ran vcl_fetch
+            H: refers to a HIT
+            M: refers to a MISS
+            The number following specific server name is a time stamp in seconds
+    
+    Fastly-Debug-TTL
+            (H cache-fjr7922-FJR 85270.622 0.000 1129) 
+            (H cache-lcy19237-LCY 86399.498 0.000 1)
+        
+        provides information on HIT and MISS timings.
+            H represents a HIT
+            M represents a MISS
+            For each of these timings:
+
+            the first number - TTL remaining for the object
+            the second number - grace period
+            the third number specifies the current age of the object in cache
+    
+    
+    
 * Healthcheck
     
     Go and clone version then "Create Health Check"
