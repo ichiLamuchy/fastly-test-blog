@@ -176,7 +176,8 @@ mac OSX 10.13.2
             using surrogate key to purge multiple indivisual path
         
         ++++++++++ todo: when soft purge is useful???  emailed
-        ++++++++++ todo: if purge url was not existing how do you know??? emailed
+            even if purge url or key was not existing it does not show error++++++++
+            
         
      * other mehod:
         Authenticating URL purge requests van be done via API to just follow here
@@ -197,6 +198,14 @@ mac OSX 10.13.2
         < X-Cache: MISS, MISS
         < X-Cache-Hits: 0, 0
         < X-Timer: S1518995908.290193,VS0,VE37
+        
+ *7 Creating error pages
+ https://docs.fastly.com/guides/basic-configuration/creating-error-pages-with-custom-responses
+ 
+    beresp.status == 404 
+    in the Apply if field here tells Fastly to use this response object 
+    whenever origin servers return a 404 status
+ 
 
 ------------------------------------------------------------------------------------------------
 =========================
@@ -233,7 +242,7 @@ Some more understanding
         X-Cache-Hits: 1
 
 
-* Debug info +++++++++++++++++++++++++++++++++++++++++++++++++ need to check - have asked by e-mail.
+* Debug info 
     The Fastly-Debug Path
             (D cache-fjr7922-FJR 1518996169) (F cache-fjr7922-FJR 1518995041) 
             (D cache-lcy19237-LCY 1518995040) (F cache-lcy19248-LCY 1518995040)
