@@ -204,8 +204,17 @@ mac OSX 10.13.2
  
     beresp.status == 404 
     in the Apply if field here tells Fastly to use this response object 
-    whenever origin servers return a 404 status
- 
+    whenever origin servers return a 404 status 
+    
+    so when you request non existing page it will show that
+    the massage you set but make sure
+    you test with blog-fastly.herokuapp.com.global.prod.fastly.net
+    So you type 
+        i.e. blog-fastly.herokuapp.com.global.prod.fastly.net/non-existing-page
+    on the address bar
+    
+    
+    
 
 ------------------------------------------------------------------------------------------------
 =========================
